@@ -2,6 +2,7 @@ package main
 
 import (
 	"database/sql"
+	"strconv"
 )
 
 type ParcelStore struct {
@@ -32,12 +33,16 @@ func (s ParcelStore) Add(p Parcel) (int, error) {
 }
 
 func (s ParcelStore) Get(number int) (Parcel, error) {
+	p := Parcel{}
 	// реализуйте чтение строки по заданному number
 	// здесь из таблицы должна вернуться только одна строка
-
-	// заполните объект Parcel данными из таблицы
-	p := Parcel{}
-
+	row := s.db.QueryRow("SELECT number, client, status, address, create_at FROM parcel WHERE id = :id",
+				 sql.Named("id", number))
+	err := row.Scan(&p.Number, &p.Client, &p.Status, &p.Address, &p.CreatedAt)
+	if err != nil {
+		return Parcel{}, err
+	}
+	
 	return p, nil
 }
 
