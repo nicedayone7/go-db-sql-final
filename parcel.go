@@ -2,7 +2,6 @@ package main
 
 import (
 	"database/sql"
-	"strconv"
 )
 
 type ParcelStore struct {
@@ -47,12 +46,25 @@ func (s ParcelStore) Get(number int) (Parcel, error) {
 }
 
 func (s ParcelStore) GetByClient(client int) ([]Parcel, error) {
-	// реализуйте чтение строк из таблицы parcel по заданному client
-	// здесь из таблицы может вернуться несколько строк
-
-	// заполните срез Parcel данными из таблицы
 	var res []Parcel
 
+	rows, err := s.db.Query("SELECT number, client, status, address, create_at WHERE client = :client", sql.Named("client", client))
+	if err != nil {
+		return nil, err
+	}
+
+	for rows.Next() {
+		parcel := Parcel{}
+		err := rows.Scan(&parcel.Number, &parcel.Client, &parcel.Status, &parcel.Address, &parcel.CreatedAt)
+		if err != nil {
+			return nil, err
+		}
+		res = append(res, parcel)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	
 	return res, nil
 }
 
