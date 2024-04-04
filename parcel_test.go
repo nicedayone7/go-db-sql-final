@@ -39,7 +39,7 @@ func TestAddGetDelete(t *testing.T) {
 	// prepare
 	db, err := sql.Open(driver, dbname)// настройте подключение к БД
 	
-	require.Error(t, err)
+	require.NoError(t, err)
 	store := NewParcelStore(db)
 	parcel := getTestParcel()
 
@@ -51,7 +51,7 @@ func TestAddGetDelete(t *testing.T) {
 	// get
 	// получите только что добавленную посылку, убедитесь в отсутствии ошибки
 	// проверьте, что значения всех полей в полученном объекте совпадают со значениями полей в переменной parcel
-	p, err := store.Get(parcel.Client)
+	p, err := store.Get(num)
 	require.NoError(t, err)
 	assert.Equal(t, parcel.Client, p.Client)
 	assert.Equal(t, parcel.Status, p.Status)
@@ -63,6 +63,7 @@ func TestAddGetDelete(t *testing.T) {
 	// проверьте, что посылку больше нельзя получить из БД
 	err = store.Delete(parcel.Client)
 	require.NoError(t, err)
+
 	p, err = store.Get(p.Client)
 	assert.Equal(t, Parcel{}, p)
 }
@@ -71,7 +72,7 @@ func TestAddGetDelete(t *testing.T) {
 func TestSetAddress(t *testing.T) {
 	// prepare
 	db, err := sql.Open(driver, dbname)
-	require.Error(t, err)
+	require.NoError(t, err)
 	store := NewParcelStore(db)
 	parcel := getTestParcel()
 
@@ -98,7 +99,7 @@ func TestSetAddress(t *testing.T) {
 func TestSetStatus(t *testing.T) {
 	// prepare
 	db, err := sql.Open(driver, dbname)
-	require.Error(t, err)
+	require.NoError(t, err)
 	store := NewParcelStore(db)
 	parcel := getTestParcel()
 
@@ -123,7 +124,7 @@ func TestSetStatus(t *testing.T) {
 func TestGetByClient(t *testing.T) {
 	// prepare
 	db, err := sql.Open(driver, dbname)
-	require.Error(t, err)
+	require.NoError(t, err)
 	store := NewParcelStore(db)
 
 	parcels := []Parcel{
