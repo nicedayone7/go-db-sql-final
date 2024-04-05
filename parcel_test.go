@@ -37,8 +37,8 @@ func getTestParcel() Parcel {
 // TestAddGetDelete проверяет добавление, получение и удаление посылки
 func TestAddGetDelete(t *testing.T) {
 	// prepare
-	db, err := sql.Open(driver, dbname)// настройте подключение к БД
-	
+	db, err := sql.Open(driver, dbname) // настройте подключение к БД
+
 	require.NoError(t, err)
 	store := NewParcelStore(db)
 	parcel := getTestParcel()
@@ -46,17 +46,14 @@ func TestAddGetDelete(t *testing.T) {
 	// add
 	num, err := store.Add(parcel)
 	require.NoError(t, err)
-	assert.NotEqual(t, 0, num)
+	assert.Greater(t, num, 0)
 
 	// get
 	// получите только что добавленную посылку, убедитесь в отсутствии ошибки
 	// проверьте, что значения всех полей в полученном объекте совпадают со значениями полей в переменной parcel
 	p, err := store.Get(num)
 	require.NoError(t, err)
-	assert.Equal(t, parcel.Client, p.Client)
-	assert.Equal(t, parcel.Status, p.Status)
-	assert.Equal(t, parcel.Address, p.Address)
-	assert.Equal(t, parcel.CreatedAt, p.CreatedAt)
+	assert.Equal(t, parcel, p)
 
 	// delete
 	// удалите добавленную посылку, убедитесь в отсутствии ошибки
@@ -64,8 +61,8 @@ func TestAddGetDelete(t *testing.T) {
 	err = store.Delete(parcel.Client)
 	require.NoError(t, err)
 
-	p, err = store.Get(p.Client)
-	assert.Equal(t, Parcel{}, p)
+	_, err = store.Get(p.Client)
+	assert.Error(t, err)
 }
 
 // TestSetAddress проверяет обновление адреса
@@ -80,7 +77,7 @@ func TestSetAddress(t *testing.T) {
 	// добавьте новую посылку в БД, убедитесь в отсутствии ошибки и наличии идентификатора
 	num, err := store.Add(parcel)
 	require.NoError(t, err)
-	assert.NotEqual(t, 0, num)
+	assert.Greater(t, num, 0)
 
 	// set address
 	// обновите адрес, убедитесь в отсутствии ошибки
@@ -107,7 +104,7 @@ func TestSetStatus(t *testing.T) {
 	// добавьте новую посылку в БД, убедитесь в отсутствии ошибки и наличии идентификатора
 	num, err := store.Add(parcel)
 	require.NoError(t, err)
-	assert.NotEqual(t, 0, num)
+	assert.Greater(t, num, 0)
 
 	// set status
 	// обновите статус, убедитесь в отсутствии ошибки
@@ -168,7 +165,7 @@ func TestGetByClient(t *testing.T) {
 		// убедитесь, что все посылки из storedParcels есть в parcelMap
 		// убедитесь, что значения полей полученных посылок заполнены верно
 		assert.Equal(t, parcelMap[parcel.Number].Client, parcel.Client)
-		assert.Equal(t,parcelMap[parcel.Number].Status, parcel.Status)
+		assert.Equal(t, parcelMap[parcel.Number].Status, parcel.Status)
 		assert.Equal(t, parcelMap[parcel.Number].Address, parcel.Address)
 		assert.Equal(t, parcelMap[parcel.Number].CreatedAt, parcel.CreatedAt)
 	}
