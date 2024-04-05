@@ -102,7 +102,7 @@ func main() {
 	if err != nil {
 		fmt.Printf("Error connect db: %s", err)
 	}
-	store := NewParcelStore(db)// создайте объект ParcelStore функцией NewParcelStore
+	store := NewParcelStore(db) // создайте объект ParcelStore функцией NewParcelStore
 	service := NewParcelService(store)
 
 	// регистрация посылки
