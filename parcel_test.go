@@ -129,7 +129,7 @@ func TestGetByClient(t *testing.T) {
 		getTestParcel(),
 		getTestParcel(),
 	}
-	parcelMap := map[int]Parcel{}
+	parcelList := []Parcel{}
 
 	// задаём всем посылкам один и тот же идентификатор клиента
 	client := randRange.Intn(10_000_000)
@@ -147,7 +147,7 @@ func TestGetByClient(t *testing.T) {
 		parcels[i].Number = id
 
 		// сохраняем добавленную посылку в структуру map, чтобы её можно было легко достать по идентификатору посылки
-		parcelMap[id] = parcels[i]
+		parcelList = append(parcelList, parcels[i])
 	}
 
 	// get by client
@@ -156,17 +156,18 @@ func TestGetByClient(t *testing.T) {
 	// убедитесь в отсутствии ошибки
 	require.NoError(t, err)
 	// убедитесь, что количество полученных посылок совпадает с количеством добавленных
-	assert.Equal(t, len(parcelMap), len(storedParcels))
+	assert.Equal(t, len(parcelList), len(storedParcels))
 
 	// check
-	for _, parcel := range storedParcels {
-		// в parcelMap лежат добавленные посылки, ключ - идентификатор посылки, значение - сама посылка
-		assert.Equal(t, parcelMap[parcel.Number], parcel)
-		// убедитесь, что все посылки из storedParcels есть в parcelMap
-		// убедитесь, что значения полей полученных посылок заполнены верно
-		assert.Equal(t, parcelMap[parcel.Number].Client, parcel.Client)
-		assert.Equal(t, parcelMap[parcel.Number].Status, parcel.Status)
-		assert.Equal(t, parcelMap[parcel.Number].Address, parcel.Address)
-		assert.Equal(t, parcelMap[parcel.Number].CreatedAt, parcel.CreatedAt)
-	}
+	assert.Equal(t, parcelList, storedParcels)
+	// for _, parcel := range storedParcels {
+	// 	// в parcelMap лежат добавленные посылки, ключ - идентификатор посылки, значение - сама посылка
+	// 	assert.Equal(t, parcelMap[parcel.Number], parcel)
+	// 	// убедитесь, что все посылки из storedParcels есть в parcelMap
+	// 	// убедитесь, что значения полей полученных посылок заполнены верно
+	// 	assert.Equal(t, parcelMap[parcel.Number].Client, parcel.Client)
+	// 	assert.Equal(t, parcelMap[parcel.Number].Status, parcel.Status)
+	// 	assert.Equal(t, parcelMap[parcel.Number].Address, parcel.Address)
+	// 	assert.Equal(t, parcelMap[parcel.Number].CreatedAt, parcel.CreatedAt)
+	// }
 }
